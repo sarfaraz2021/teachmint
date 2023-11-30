@@ -1,13 +1,11 @@
 // DigitalClock.js
 
 import React, { useState, useEffect } from 'react';
-import axios from 'axios'
 
-const DigitalClock = ({offsetTime, start }) => {
-  // const [start, setStart]=useState(true)
+const DigitalClock = ({offsetTime, start,clockKey }) => {
   const [time, setTime] = useState(offsetTime);
-  const [isRunning, setIsRunning] = useState(true);
-  // const [formattedTime, setFormattedTime]=useState()
+  // const [isRunning, setIsRunning] = useState(true);
+  const [clock, setClock]=useState(clockKey)
 
   const options = { hour: '2-digit', minute: '2-digit', second: '2-digit',hour12: false}
   const formattedTime =time?.toLocaleTimeString('en-US', options);
@@ -17,10 +15,15 @@ useEffect(() => {
   let intervalID;
   if(start===true){
   intervalID = setInterval(() => {
-    console.log("value check", new Date());
+    // console.log("value check", new Date());
+    // if(clockKey>clock)
+    // {
+
+    //   setTime(offsetTime)
+    // }
     setTime((prevTime) => {
       const newTime = new Date(prevTime?.getTime() + 1000);
-      console.log("new time",newTime);
+      // console.log("new time",newTime);
       return newTime;
     });
   }, 1000);

@@ -6,6 +6,7 @@ import axios from 'axios'
 import { useData } from './DataProvider';
 import DigitalClock from './DigitalClock';
 import Modal from './Modal';
+import ModalCard from './ModalCard';
 
 
 
@@ -18,6 +19,7 @@ const ProfilePage = () => {
     const [profileData, setProfileData] = useState({})
     const [isOpen, setIsOpen] = useState(false)
     const [modalData, setModalData] = useState()
+    const [clockKey, setClockKey]=useState(0)
 
     const { worldCity, posts } = useData()
     const params = useParams()
@@ -31,7 +33,7 @@ const ProfilePage = () => {
     }
 
     const closeModal = () => {
-        setIsOpen(false);
+        setIsOpen(!isOpen);
     };
 
 
@@ -44,12 +46,18 @@ const ProfilePage = () => {
             })
     }, [])
 
+
+    const timeSetter=(timeStamp)=>{
+        setTime(new Date(timeStamp))
+        setClockKey((prevKey)=> prevKey+1)
+    }
+
     useEffect(() => {
         console.log("changed city", city)
         axios.get(`http://worldtimeapi.org/api/timezone/${city}`)
             .then((response) => {
-                setTime(new Date(response.data.datetime))
-                console.log("--------------------------------------------",time)
+                timeSetter(response.data.datetime)
+                console.log("--------------------------------------------",response.data.datetime)
             })
             .catch((error) => console.log(error))
     }, [city])
@@ -80,7 +88,7 @@ const ProfilePage = () => {
                 </div>
                 <div className='mx-2'>
                     {time &&
-                        <DigitalClock offsetTime={time} start={isRunning} />
+                        <DigitalClock  clockKey={clockKey} offsetTime={time} start={isRunning} />
                     }
                 </div>
                 <button onClick={() => setIsRunning(!isRunning)}>Pause/Start</button>
@@ -145,11 +153,14 @@ const ProfilePage = () => {
                         )}
                 </div>
             </div>
+            {isOpen&&
+            <ModalCard isOpen={isOpen} onClose={closeModal} post={modalData}/>}
+            {/* {isOpen&&
             <Modal
                 isOpen={isOpen}
                 onClose={closeModal}
                 post={modalData}
-            />
+            />} */}
 
         </div>
     );
